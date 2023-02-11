@@ -23,9 +23,14 @@ class ReactiveCheckbox extends ReactiveFocusableFormField<bool, bool> {
   ///
   /// The [formControlName] arguments must not be null.
   ReactiveCheckbox({
-    Key? key,
-    String? formControlName,
-    FormControl<bool>? formControl,
+    super.key,
+    super.formControlName,
+    super.formControl,
+    super.focusNode,
+    super.showErrors,
+    super.validationMessages,
+    super.validators,
+    super.valueAccessor,
     bool tristate = false,
     Color? activeColor,
     Color? checkColor,
@@ -38,40 +43,33 @@ class ReactiveCheckbox extends ReactiveFocusableFormField<bool, bool> {
     MaterialStateProperty<Color?>? fillColor,
     MaterialStateProperty<Color?>? overlayColor,
     double? splashRadius,
-    FocusNode? focusNode,
     OutlinedBorder? shape,
     BorderSide? side,
     ReactiveFormFieldCallback<bool>? onChanged,
   }) : super(
-          key: key,
-          formControl: formControl,
-          formControlName: formControlName,
-          focusNode: focusNode,
-          builder: (field) {
-            return Checkbox(
-              value: tristate ? field.value : field.value ?? false,
-              tristate: tristate,
-              mouseCursor: mouseCursor,
-              activeColor: activeColor,
-              checkColor: checkColor,
-              focusColor: focusColor,
-              hoverColor: hoverColor,
-              materialTapTargetSize: materialTapTargetSize,
-              visualDensity: visualDensity,
-              autofocus: autofocus,
-              fillColor: fillColor,
-              overlayColor: overlayColor,
-              splashRadius: splashRadius,
-              focusNode: field.focusNode,
-              shape: shape,
-              side: side,
-              onChanged: field.control.enabled
-                  ? (value) {
-                      field.didChange(value);
-                      onChanged?.call(field.control);
-                    }
-                  : null,
-            );
-          },
+          builder: (field) => Checkbox(
+            value: tristate ? field.value : field.value ?? false,
+            tristate: tristate,
+            mouseCursor: mouseCursor,
+            activeColor: activeColor,
+            checkColor: checkColor,
+            focusColor: focusColor,
+            hoverColor: hoverColor,
+            materialTapTargetSize: materialTapTargetSize,
+            visualDensity: visualDensity,
+            autofocus: autofocus,
+            fillColor: fillColor,
+            overlayColor: overlayColor,
+            splashRadius: splashRadius,
+            focusNode: field.focusNode,
+            shape: shape,
+            side: side,
+            onChanged: field.control.enabled
+                ? (value) {
+                    field.didChange(value);
+                    onChanged?.call(field.control);
+                  }
+                : null,
+          ),
         );
 }

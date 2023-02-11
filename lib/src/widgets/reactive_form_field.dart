@@ -23,6 +23,10 @@ typedef ValidationMessageFunction = String Function(Object error);
 /// Signature of a callback that provides the control as argument.
 typedef ReactiveFormFieldCallback<T> = void Function(FormControl<T> control);
 
+//typedef ViewValidatorFunction<T> = Map<String, dynamic>? Function(T? value);
+typedef ValueValidatorFunction<T> = FutureOr<Map<String, dynamic>?> Function(
+    T? value);
+
 /// A single reactive form field.
 ///
 /// This widget maintains the current state of the reactive form field,
@@ -51,6 +55,9 @@ class ReactiveFormField<ModelDataType, ViewDataType> extends StatefulWidget {
   /// Gets the callback that define when to show errors in UI.
   final ShowErrorsFunction<ModelDataType>? showErrors;
 
+  /// validators for the [ViewDataType], these get executed before the [AbstractControl] validators
+  final List<ValueValidatorFunction<ViewDataType>>? validators;
+
   /// TODO: add documentation
   final FocusNode? focusNode;
 
@@ -60,21 +67,21 @@ class ReactiveFormField<ModelDataType, ViewDataType> extends StatefulWidget {
   /// at the same time.
   ///
   /// The [builder] arguments are required.
-  ReactiveFormField({
-    Key? key,
+  const ReactiveFormField({
+    super.key,
     this.formControl,
     this.formControlName,
     this.valueAccessor,
     this.showErrors,
     this.validationMessages,
     this.focusNode,
+    this.validators,
     required ReactiveFormFieldBuilder<ModelDataType, ViewDataType> builder,
   })  : assert(
             (formControlName != null && formControl == null) ||
                 (formControlName == null && formControl != null),
             'Must provide a formControlName or a formControl, but not both at the same time.'),
-        _builder = builder,
-        super(key: key);
+        _builder = builder;
 
   @override
   ReactiveFormFieldState<ModelDataType, ViewDataType> createState() =>
@@ -89,6 +96,8 @@ class ReactiveFormFieldState<ModelDataType, ViewDataType>
   late StreamSubscription<ControlStatus> _statusChangesSubscription;
   late StreamSubscription<bool> _touchChangesSubscription;
   late ControlValueAccessor<ModelDataType, ViewDataType> _valueAccessor;
+  // final Map<String, Object?> _viewErrors = {};
+  // Map<String, Object?> get viewErrors => Map.unmodifiable(_viewErrors);
 
   /// Gets the value of the [FormControl] given by the [valueAccessor].
   ViewDataType? get value => valueAccessor.modelToViewValue(control.value);
@@ -200,7 +209,9 @@ class ReactiveFormFieldState<ModelDataType, ViewDataType>
 
   @protected
   @mustCallSuper
-  void onControlValueChanged(dynamic value) {
+  void onControlValueChanged(ViewDataType? value) {
+    // validate view type
+    _validateViewType(value);
     _checkTouchedState();
   }
 
@@ -210,6 +221,8 @@ class ReactiveFormFieldState<ModelDataType, ViewDataType>
   /// Updates the value of the [FormControl] bound to this widget.
   void didChange(ViewDataType? value) {
     _valueAccessor.updateModel(value);
+    // validate view type
+    _validateViewType(value);
     _checkTouchedState();
   }
 
@@ -221,17 +234,48 @@ class ReactiveFormFieldState<ModelDataType, ViewDataType>
   }
 
   void _checkTouchedState() {
-    if (touched) {
+    if (mounted && touched) {
       setState(() {});
     }
   }
 
   void _onControlStatusChanged(ControlStatus status) {
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void _onControlTouchChanged(bool touched) {
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _validateViewType(ViewDataType? viewValue) {
+    final validators = widget.validators ?? [];
+    final futures = <Future<Map<String, dynamic>?>>[];
+    Map<String, dynamic>? syncErrors;
+    for (var v in validators) {
+      final e = v(viewValue);
+      if (e is Future<Map<String, dynamic>?>) {
+        futures.add(e);
+      } else {
+        if (e != null && e.isNotEmpty) {
+          //there ARE errors
+          syncErrors ??= <String, dynamic>{};
+          syncErrors.addAll(e);
+        }
+      }
+    }
+    if (syncErrors != null) {
+      control.setErrors(
+        <String, dynamic>{...syncErrors, ...control.errors},
+        markAsDirty: false,
+      );
+    }
+    if (futures.isNotEmpty) {
+      control.runAsyncValidators(futures);
+    }
   }
 
   ControlValueAccessor<ModelDataType, ViewDataType> _resolveValueAccessor() {

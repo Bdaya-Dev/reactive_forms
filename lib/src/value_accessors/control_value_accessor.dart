@@ -9,7 +9,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 /// Type of the function to be called when the control emits a value changes
 /// event.
-typedef ChangeFunction<K> = dynamic Function(K? value);
+typedef ChangeFunction<K> = void Function(K? value);
 
 /// Defines an interface that acts as a bridge between [FormControl] and a
 /// reactive native widget.

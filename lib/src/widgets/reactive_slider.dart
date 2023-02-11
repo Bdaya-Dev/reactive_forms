@@ -31,9 +31,14 @@ class ReactiveSlider extends ReactiveFocusableFormField<num, double> {
   /// The [labelBuilder] is called each time the [FormControl] changes its value
   /// so you can supply a label to the Slider.
   ReactiveSlider({
-    Key? key,
-    String? formControlName,
-    FormControl<num>? formControl,
+    super.key,
+    super.formControlName,
+    super.formControl,
+    super.focusNode,
+    super.showErrors,
+    super.validationMessages,
+    super.validators,
+    super.valueAccessor,
     double min = 0.0,
     double max = 1.0,
     int? divisions,
@@ -44,15 +49,10 @@ class ReactiveSlider extends ReactiveFocusableFormField<num, double> {
     SemanticFormatterCallback? semanticFormatterCallback,
     bool autofocus = false,
     MouseCursor? mouseCursor,
-    FocusNode? focusNode,
     ReactiveFormFieldCallback<num>? onChangeEnd,
     ReactiveFormFieldCallback<num>? onChangeStart,
     ReactiveFormFieldCallback<num>? onChanged,
   }) : super(
-          key: key,
-          formControl: formControl,
-          formControlName: formControlName,
-          focusNode: focusNode,
           builder: (field) {
             var value = field.value;
             if (value == null) {

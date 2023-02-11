@@ -22,13 +22,15 @@ class ReactiveDropdownField<T> extends ReactiveFocusableFormField<T, T> {
   ///
   /// The [DropdownButton] [items] parameters must not be null.
   ReactiveDropdownField({
-    Key? key,
-    String? formControlName,
-    FormControl<T>? formControl,
-    FocusNode? focusNode,
+    super.key,
+    super.formControlName,
+    super.formControl,
+    super.focusNode,
+    super.showErrors,
+    super.validationMessages,
+    super.validators,
+    super.valueAccessor,
     required List<DropdownMenuItem<T>> items,
-    Map<String, ValidationMessageFunction>? validationMessages,
-    ShowErrorsFunction<T>? showErrors,
     DropdownButtonBuilder? selectedItemBuilder,
     Widget? hint,
     InputDecoration decoration = const InputDecoration(),
@@ -55,12 +57,6 @@ class ReactiveDropdownField<T> extends ReactiveFocusableFormField<T, T> {
     ReactiveFormFieldCallback<T>? onChanged,
   })  : assert(itemHeight == null || itemHeight > 0),
         super(
-          key: key,
-          formControl: formControl,
-          formControlName: formControlName,
-          validationMessages: validationMessages,
-          showErrors: showErrors,
-          focusNode: focusNode,
           builder: (ReactiveFormFieldState<T, T> field) {
             final effectiveDecoration = decoration.applyDefaults(
               Theme.of(field.context).inputDecorationTheme,

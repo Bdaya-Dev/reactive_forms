@@ -83,13 +83,14 @@ class ReactiveTextField<T> extends ReactiveFormField<T, String> {
   /// For documentation about the various parameters, see the [TextField] class
   /// and [TextField], the constructor.
   ReactiveTextField({
-    Key? key,
-    String? formControlName,
-    FormControl<T>? formControl,
-    Map<String, ValidationMessageFunction>? validationMessages,
-    ControlValueAccessor<T, String>? valueAccessor,
-    ShowErrorsFunction<T>? showErrors,
-    FocusNode? focusNode,
+    super.key,
+    super.formControlName,
+    super.formControl,
+    super.validationMessages,
+    super.validators,
+    super.valueAccessor,
+    super.showErrors,
+    super.focusNode,
     InputDecoration decoration = const InputDecoration(),
     TextInputType? keyboardType,
     TextCapitalization textCapitalization = TextCapitalization.none,
@@ -143,13 +144,6 @@ class ReactiveTextField<T> extends ReactiveFormField<T, String> {
     ReactiveFormFieldCallback<T>? onChanged,
   })  : _textController = controller,
         super(
-          key: key,
-          formControl: formControl,
-          formControlName: formControlName,
-          valueAccessor: valueAccessor,
-          validationMessages: validationMessages,
-          showErrors: showErrors,
-          focusNode: focusNode,
           builder: (ReactiveFormFieldState<T, String> field) {
             final state = field as _ReactiveTextFieldState<T>;
             final effectiveDecoration = decoration
@@ -243,7 +237,7 @@ class _ReactiveTextFieldState<T>
   }
 
   @override
-  void onControlValueChanged(dynamic value) {
+  void onControlValueChanged(String? value) {
     final effectiveValue = (value == null) ? '' : value.toString();
     _textController.value = _textController.value.copyWith(
       text: effectiveValue,

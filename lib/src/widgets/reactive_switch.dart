@@ -33,10 +33,14 @@ class ReactiveSwitch extends ReactiveFocusableFormField<bool, bool> {
   /// For documentation about the various parameters, see the [Switch] class
   /// and [Switch], the constructor.
   ReactiveSwitch({
-    Key? key,
-    String? formControlName,
-    FormControl<bool>? formControl,
-    FocusNode? focusNode,
+    super.key,
+    super.formControlName,
+    super.formControl,
+    super.focusNode,
+    super.showErrors,
+    super.validationMessages,
+    super.validators,
+    super.valueAccessor,
     Color? activeColor,
     Color? activeTrackColor,
     Color? inactiveThumbColor,
@@ -57,10 +61,6 @@ class ReactiveSwitch extends ReactiveFocusableFormField<bool, bool> {
     double? splashRadius,
     ReactiveFormFieldCallback<bool>? onChanged,
   }) : super(
-          key: key,
-          formControl: formControl,
-          formControlName: formControlName,
-          focusNode: focusNode,
           builder: (field) {
             return Switch(
               value: field.value ?? false,

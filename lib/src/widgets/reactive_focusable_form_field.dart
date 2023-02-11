@@ -12,8 +12,9 @@ import 'package:reactive_forms/reactive_forms.dart';
 /// [ReactiveTextField], [ReactiveRadio], [ReactiveCheckbox], and many others
 /// inherit from this widget.
 class ReactiveFocusableFormField<T, V> extends ReactiveFormField<T, V> {
-  ReactiveFocusableFormField({
+  const ReactiveFocusableFormField({
     super.key,
+    super.validators,
     super.formControlName,
     super.formControl,
     super.focusNode,
@@ -40,6 +41,18 @@ class ReactiveFocusableFormFieldState<T, V>
     extends ReactiveFormFieldState<T, V> {
   FocusNode? _focusNode;
   late FocusController _focusController;
+
+  @override
+  void initState() {
+    super.initState();
+    _setFocusNode(widget.focusNode);
+  }
+
+  @override
+  void didUpdateWidget(covariant ReactiveFormField<T, V> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _setFocusNode(widget.focusNode);
+  }
 
   @override
   FocusNode get focusNode => _focusNode ?? _focusController.focusNode;
@@ -72,11 +85,5 @@ class ReactiveFocusableFormFieldState<T, V>
       _unregisterFocusController();
       _registerFocusController(FocusController(focusNode: _focusNode));
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _setFocusNode(widget.focusNode);
-    return super.build(context);
   }
 }

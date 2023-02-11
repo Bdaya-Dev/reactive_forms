@@ -8,3 +8,8 @@ import 'package:reactive_forms/reactive_forms.dart';
 abstract class Validator<T> {
   Map<String, dynamic>? validate(AbstractControl<T> control);
 }
+
+/// An interface implemented by classes that perform synchronous validation.
+abstract class ValueValidator<T> {
+  Map<String, dynamic>? validateValue(T? value);
+}

@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-
+import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
@@ -26,7 +26,7 @@ abstract class AbstractControl<T> {
   final List<AsyncValidatorFunction> _asyncValidators =
       <AsyncValidatorFunction>[];
 
-  StreamSubscription<Map<String, dynamic>?>? _asyncValidationSubscription;
+  CancelableOperation<void>? _asyncValidationOperation;
   Map<String, dynamic> _errors = <String, dynamic>{};
   bool _pristine = true;
 
@@ -424,7 +424,7 @@ abstract class AbstractControl<T> {
   void dispose() {
     _statusChanges.close();
     _valueChanges.close();
-    _asyncValidationSubscription?.cancel();
+    _asyncValidationOperation?.cancel();
   }
 
   /// Sets the value of the control.
@@ -659,8 +659,8 @@ abstract class AbstractControl<T> {
   }
 
   Future<void> _cancelExistingSubscription() async {
-    await _asyncValidationSubscription?.cancel();
-    _asyncValidationSubscription = null;
+    await _asyncValidationOperation?.cancel();
+    _asyncValidationOperation = null;
   }
 
   /// runs async validators to validate the value of current control
@@ -668,7 +668,13 @@ abstract class AbstractControl<T> {
     if (_asyncValidators.isEmpty) {
       return;
     }
+    return runAsyncValidators(
+        _asyncValidators.map((validator) => validator(this)).toList());
+  }
 
+  Future<void> runAsyncValidators(
+    List<Future<Map<String, dynamic>?>> futures,
+  ) async {
     _status = ControlStatus.pending;
 
     _debounceTimer?.cancel();
@@ -676,24 +682,20 @@ abstract class AbstractControl<T> {
     _debounceTimer = Timer(
       Duration(milliseconds: _asyncValidatorsDebounceTime),
       () {
-        final validatorsStream = Stream.fromFutures(
-            asyncValidators.map((validator) => validator(this)).toList());
-
-        final asyncValidationErrors = <String, dynamic>{};
-        _asyncValidationSubscription = validatorsStream.listen(
-          (Map<String, dynamic>? error) {
-            if (error != null) {
-              asyncValidationErrors.addAll(error);
-            }
-          },
-          onDone: () {
-            final allErrors = <String, dynamic>{};
-            allErrors.addAll(errors);
-            allErrors.addAll(asyncValidationErrors);
-
-            setErrors(allErrors, markAsDirty: false);
-          },
-        );
+        _asyncValidationOperation = CancelableOperation.fromFuture(
+          Future.wait(futures)
+              .then(
+                (value) => <String, dynamic>{
+                  for (final m in value) ...?m,
+                },
+              )
+              .then(
+                (value) => <String, dynamic>{
+                  ...errors,
+                  ...value,
+                },
+              ),
+        ).then((p0) => setErrors(p0, markAsDirty: false));
       },
     );
   }

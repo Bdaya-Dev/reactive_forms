@@ -35,21 +35,47 @@ typedef AsyncValidatorFunction = Future<Map<String, dynamic>?> Function(
 
 /// Provides a set of built-in validators that can be used by form controls.
 class Validators {
+  /// {@template validators.required}
   /// Gets a validator that requires the control have a non-empty value.
+  /// {@endtemplate}
   static ValidatorFunction get required => RequiredValidator().validate;
 
+  /// {@macro validators.required}
+  static ValueValidatorFunction<Object?> get requiredValue =>
+      RequiredValidator().validateValue;
+
+  /// {@template validators.requiredTrue}
   /// Gets a validator that requires the control's value be true.
   /// This validator is commonly used for required checkboxes.
+  /// {@endtemplate}
   static ValidatorFunction get requiredTrue => EqualsValidator<bool>(true,
           validationMessage: ValidationMessage.requiredTrue)
       .validate;
 
+  /// {@macro validators.requiredTrue}
+  static ValueValidatorFunction<Object?> get requiredTrueValue =>
+      EqualsValidator<bool>(true,
+              validationMessage: ValidationMessage.requiredTrue)
+          .validateValue;
+
+  /// {@template validators.email}
   /// Gets a validator that requires the control's value pass an email
   /// validation test.
+  /// {@endtemplate}
   static ValidatorFunction get email => EmailValidator().validate;
 
+  /// {@macro validators.email}
+  static ValueValidatorFunction<Object?> get emailValue =>
+      EmailValidator().validateValue;
+
+  /// {@template validators.number}
   /// Gets a validator that validates if control's value is a numeric value.
+  /// {@endtemplate}
   static ValidatorFunction get number => NumberValidator().validate;
+
+  /// {@macro validators.number}
+  static ValueValidatorFunction<Object?> get numberValue =>
+      NumberValidator().validateValue;
 
   /// Gets a validator that validates if the control's value is a valid
   /// credit card number.

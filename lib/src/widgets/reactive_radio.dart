@@ -29,9 +29,14 @@ class ReactiveRadio<T> extends ReactiveFocusableFormField<T, T> {
   /// For documentation about the various parameters, see the [Radio] class
   /// and [Radio], the constructor.
   ReactiveRadio({
-    Key? key,
-    String? formControlName,
-    FormControl<T>? formControl,
+    super.key,
+    super.formControlName,
+    super.formControl,
+    super.focusNode,
+    super.showErrors,
+    super.validationMessages,
+    super.validators,
+    super.valueAccessor,
     required T value,
     Color? activeColor,
     Color? focusColor,
@@ -44,13 +49,8 @@ class ReactiveRadio<T> extends ReactiveFocusableFormField<T, T> {
     double? splashRadius,
     bool autofocus = false,
     bool toggleable = false,
-    FocusNode? focusNode,
     ReactiveFormFieldCallback<T>? onChanged,
   }) : super(
-          key: key,
-          formControl: formControl,
-          formControlName: formControlName,
-          focusNode: focusNode,
           builder: (field) {
             return Radio<T>(
               value: value,

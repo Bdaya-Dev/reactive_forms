@@ -5,6 +5,7 @@ import 'package:reactive_forms_example/sample_screen.dart';
 class SimpleSample extends StatelessWidget {
   FormGroup get form => fb.group(<String, Object>{
         'name': ['', Validators.required],
+        'number': FormControl<double>(),
         'sendNotifications': [false, Validators.required],
       });
 
@@ -24,6 +25,19 @@ class SimpleSample extends StatelessWidget {
                 ),
                 validationMessages: {
                   ValidationMessage.required: (_) => 'Name must not be empty',
+                },
+              ),
+              SizedBox(height: 8),
+              ReactiveTextField<double>(
+                formControlName: 'number',
+                decoration: const InputDecoration(
+                  labelText: 'Number',
+                ),
+                valueAccessor: DoubleValueAccessor(),
+                validators: [Validators.numberValue],
+                validationMessages: {
+                  ValidationMessage.number: (_) =>
+                      'Number must be a valid number',
                 },
               ),
               ReactiveRadioListTile(

@@ -60,9 +60,14 @@ class ReactiveTimePicker extends ReactiveFormField<TimeOfDay, TimeOfDay> {
   /// For documentation about the various parameters, see the [showTimePicker]
   /// function parameters.
   ReactiveTimePicker({
-    Key? key,
-    String? formControlName,
-    FormControl<TimeOfDay>? formControl,
+    super.key,
+    super.formControlName,
+    super.formControl,
+    super.focusNode,
+    super.showErrors,
+    super.validationMessages,
+    super.validators,
+    super.valueAccessor,
     required ReactiveTimePickerBuilder builder,
     TransitionBuilder? transitionBuilder,
     bool useRootNavigator = true,
@@ -78,9 +83,6 @@ class ReactiveTimePicker extends ReactiveFormField<TimeOfDay, TimeOfDay> {
     EntryModeChangeCallback? onEntryModeChanged,
     Offset? anchorPoint,
   }) : super(
-          key: key,
-          formControl: formControl,
-          formControlName: formControlName,
           builder: (ReactiveFormFieldState<TimeOfDay, TimeOfDay> field) {
             return builder(
               field.context,

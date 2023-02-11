@@ -25,9 +25,14 @@ class ReactiveSwitchListTile extends ReactiveFocusableFormField<bool, bool> {
   ///
   /// See also [CheckboxListTile]
   ReactiveSwitchListTile({
-    Key? key,
-    String? formControlName,
-    FormControl<bool>? formControl,
+    super.key,
+    super.formControlName,
+    super.formControl,
+    super.focusNode,
+    super.showErrors,
+    super.validationMessages,
+    super.validators,
+    super.valueAccessor,
     Color? tileColor,
     Color? activeColor,
     Color? activeTrackColor,
@@ -49,13 +54,8 @@ class ReactiveSwitchListTile extends ReactiveFocusableFormField<bool, bool> {
     Color? selectedTileColor,
     VisualDensity? visualDensity,
     bool? enableFeedback,
-    FocusNode? focusNode,
     ReactiveFormFieldCallback<bool>? onChanged,
   }) : super(
-          key: key,
-          formControl: formControl,
-          formControlName: formControlName,
-          focusNode: focusNode,
           builder: (field) {
             return SwitchListTile(
               value: field.value ?? false,
